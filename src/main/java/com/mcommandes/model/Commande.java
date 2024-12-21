@@ -1,28 +1,26 @@
 package com.mcommandes.model;
 
+import jakarta.persistence.*;
+import java.util.Date;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-
-import java.time.LocalDate;
 @Entity
 public class Commande {
+
     @Id
-    @GeneratedValue
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String description;
     private int quantite;
-    private LocalDate date;
+    private Date date;
     private double montant;
 
-    // Getters and setters
-
-    public String getId() {
+    // Getters et Setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -42,11 +40,11 @@ public class Commande {
         this.quantite = quantite;
     }
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

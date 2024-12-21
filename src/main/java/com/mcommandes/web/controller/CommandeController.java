@@ -1,91 +1,66 @@
 package com.mcommandes.web.controller;
 
-import com.mcommandes.configurations.ApplicationPropertiesConfiguration;
 import com.mcommandes.dao.CommandeDao;
 import com.mcommandes.model.Commande;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @RestController
-public class CommandeController implements HealthIndicator {
-    @Autowired
-    CommandeDao commandeDao;
+@RequestMapping("/commandes")
+public class CommandeController {
 
     @Autowired
-    ApplicationPropertiesConfiguration appProperties;
+    private CommandeDao commandeRepository;
 
-    private final List<Commande> commandes = new ArrayList<>();
-
-    @Value("${mes-config-ms.commandes-last:10}")
-    private int commandesLast;
-
-    @GetMapping
-    public List<Commande> getCommandes() {
-        LocalDate cutoffDate = LocalDate.now().minusDays(commandesLast);
-        return commandes.stream()
-                .filter(commande -> commande.getDate().isAfter(cutoffDate))
-                .collect(Collectors.toList());
-    }
-
+    // POST /commandes : Créer une commande
     @PostMapping
-    public Commande createCommande(@RequestBody Commande commande) {
-        commande.setId(UUID.randomUUID().toString());
-        commandes.add(commande);
-        return commande;
+    public ResponseEntity<Commande> createCommande(@RequestBody Commande commande) {
+        Commande savedCommande = commandeRepository.save(commande);
+        return new ResponseEntity<>(savedCommande, HttpStatus.CREATED);
     }
 
+    // GET /commandes : Récupérer toutes les commandes
+    @GetMapping
+    public ResponseEntity<List<Commande>> getAllCommandes() {
+        List<Commande> commandes = commandeRepository.findAll();
+        return new ResponseEntity<>(commandes, HttpStatus.OK);
+    }
+
+    // GET /commandes/{id} : Récupérer une commande par ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Commande> getCommandeById(@PathVariable Long id) {
+        return commandeRepository.findById(id)
+                .map(commande -> new ResponseEntity<>(commande, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    // PUT /commandes/{id} : Mettre à jour une commande
     @PutMapping("/{id}")
-    public Commande updateCommande(@PathVariable String id, @RequestBody Commande updatedCommande) {
-        return commandes.stream()
-                .filter(commande -> commande.getId().equals(id))
-                .findFirst()
+    public ResponseEntity<Commande> updateCommande(@PathVariable Long id, @RequestBody Commande updatedCommande) {
+        return commandeRepository.findById(id)
                 .map(commande -> {
                     commande.setDescription(updatedCommande.getDescription());
                     commande.setQuantite(updatedCommande.getQuantite());
                     commande.setDate(updatedCommande.getDate());
                     commande.setMontant(updatedCommande.getMontant());
-                    return commande;
+                    Commande savedCommande = commandeRepository.save(commande);
+                    return new ResponseEntity<>(savedCommande, HttpStatus.OK);
                 })
-                .orElseThrow(() -> new NoSuchElementException("Commande not found"));
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    // DELETE /commandes/{id} : Supprimer une commande
     @DeleteMapping("/{id}")
-    public void deleteCommande(@PathVariable String id) {
-        commandes.removeIf(commande -> commande.getId().equals(id));
-    }
-
-    @Override
-    public Health health() {
-        return null;
+    public ResponseEntity<Void> deleteCommande(@PathVariable Long id) {
+        return commandeRepository.findById(id)
+                .map(commande -> {
+                    commandeRepository.delete(commande);
+                    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
-/*
-@Bean
-public HealthIndicator commandesHealthIndicator() {
-    return () -> {
-        boolean hasCommandes = !commandes.isEmpty();
-        return hasCommandes ? Health.up().build() : Health.down().withDetail("reason", "No commandes available").build();
-    };
-}*/
-/*
-@Override
-    public Health health() {
-        System.out.println("****** Actuator : CommandeController health() ");
-        List<Commande> products = commandeDao.findAll();
-
-        if (products.isEmpty()) {
-            return Health.down().build();
-        }
-
-        return Health.up().build();
-    }
-}*/
