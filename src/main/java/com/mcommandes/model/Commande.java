@@ -1,6 +1,8 @@
 package com.mcommandes.model;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 @Entity
@@ -14,6 +16,8 @@ public class Commande {
     private int quantite;
     private Date date;
     private double montant;
+
+    @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL, orphanRemoval = true)
 
     // Getters et Setters
     public Long getId() {
