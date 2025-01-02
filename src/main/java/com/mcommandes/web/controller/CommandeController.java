@@ -1,22 +1,32 @@
 package com.mcommandes.web.controller;
 
-
-
-import com.mcommandes.dao.CommandeDTO;
+import com.mcommandes.dao.ClientDTO;
+import com.mcommandes.dao.ProduitDTO;
+import com.mcommandes.feign.ClientsClient;
+import com.mcommandes.feign.ProduitsClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
+@RequestMapping("/commandes")
 public class CommandeController {
 
-    @GetMapping("/commandes")
-    public List<CommandeDTO> getAllCommandes() {
-        // Vous pouvez remplacer par une logique réelle (par exemple, accéder à une base de données)
-        return List.of(
-                new CommandeDTO(1, "Commande 1", "Détails de la commande 1"),
-                new CommandeDTO(2, "Commande 2", "Détails de la commande 2")
-        );
+    private final ClientsClient clientsClient;
+    private final ProduitsClient produitsClient;
+
+    public CommandeController(ClientsClient clientsClient, ProduitsClient produitsClient) {
+        this.clientsClient = clientsClient;
+        this.produitsClient = produitsClient;
+    }
+
+    @GetMapping("/details")
+    public Map<String, Object> getCommandeDetails() {
+        List<ClientDTO> clients = clientsClient.getClients();
+        List<ProduitDTO> produits = produitsClient.getProduits();
+        return Map.of("clients", clients, "produits", produits);
     }
 }
