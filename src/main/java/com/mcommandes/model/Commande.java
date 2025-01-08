@@ -1,23 +1,35 @@
 package com.mcommandes.model;
 
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+@Entity
 public class Commande {
-    private Long id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String description;
-    private Double amount;
-
-    // Constructeur
-    public Commande(Long id, String description, Double amount) {
-        this.id = id;
-        this.description = description;
-        this.amount = amount;
-    }
-
-    // Getters et setters
-    public Long getId() {
+    private int quantite;
+    private Date date;
+    private double montant;
+    private int productid;
+   // Getters et Setters
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
+        this.id = id;
+    }
+    // Getters and Setters
+    public int getProductid() {
+        return id;
+    }
+
+    public void setProductid(int productid) {
         this.id = id;
     }
 
@@ -29,11 +41,27 @@ public class Commande {
         this.description = description;
     }
 
-    public Double getAmount() {
-        return amount;
+    public int getQuantite() {
+        return quantite;
     }
 
-    public void setAmount(Double amount) {
-        this.amount = amount;
+    public void setQuantite(int quantite) {
+        this.quantite = quantite;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public double getMontant() {
+        return montant;
+    }
+
+    public void setMontant(double montant) {
+        this.montant = montant;
     }
 }
