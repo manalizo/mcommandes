@@ -1,4 +1,4 @@
-package com.mproduits.web.exceptions;
+package com.mcommandes.web.exceptions;
 
 public class CommandeNotFoundException extends RuntimeException {
 

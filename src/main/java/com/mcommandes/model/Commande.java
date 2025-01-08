@@ -10,21 +10,26 @@ public class Commande {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private int id;
     private String description;
     private int quantite;
     private Date date;
     private double montant;
-
-    @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL, orphanRemoval = true)
-
-    // Getters et Setters
-    public Long getId() {
+    private int productid;
+   // Getters et Setters
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
+        this.id = id;
+    }
+    // Getters and Setters
+    public int getProductid() {
+        return id;
+    }
+
+    public void setProductid(int productid) {
         this.id = id;
     }
 

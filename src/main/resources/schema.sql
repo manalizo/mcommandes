@@ -3,6 +3,7 @@ CREATE TABLE Commande (
                           description TEXT NOT NULL,
                           quantite INT NOT NULL,
                           date DATE NOT NULL,
-                          montant DOUBLE NOT NULL
+                          montant DOUBLE NOT NULL,
+                          productid INT NOT NULL
 );
 
