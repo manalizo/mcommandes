@@ -80,6 +80,16 @@ public class CommandeController implements HealthIndicator {
             return ResponseEntity.noContent().build();
         }
 
+    @GetMapping("/delayedResponse")
+    public String delayedResponse() throws InterruptedException {
+        Thread.sleep(10000); // Délai de 10 secondes (simule une lenteur excessive)
+        return "Réponse avec délai";
+    }
+
+    @GetMapping("/details")
+    public String getCommandeDetails() {
+        return commandeService.getCommandeDetails();
+    }
     @Override
     public Health health() {
         System.out.println("****** Actuator : ProductController health() ");
