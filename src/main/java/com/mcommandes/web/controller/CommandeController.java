@@ -46,6 +46,13 @@ public class CommandeController implements HealthIndicator {
 
 
     // Get all Commandes
+    @GetMapping
+    public ResponseEntity<List<Commande>> getAllCommandes() {
+
+        List<Commande> commandes = commandeService.getAllCommandes();
+
+        return ResponseEntity.ok( commandes);
+    }/*
         @GetMapping
         public ResponseEntity<List<Commande>> getAllCommandes() {
             commandesLast=appProperties.getLimitDeCommandes();
@@ -65,7 +72,7 @@ public class CommandeController implements HealthIndicator {
                     })
                     .collect(Collectors.toList()));
         }
-
+*/
         // Get a Commande by ID
         @GetMapping("/{id}")
         public ResponseEntity<Commande> getCommandeById(@PathVariable int id) {
