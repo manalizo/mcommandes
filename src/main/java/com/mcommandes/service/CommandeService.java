@@ -34,6 +34,4 @@ public class CommandeService {
     public void deleteCommande(int id) {
         commandeRepository.deleteById(id);
     }
-
-    // Additional business logic can go here (for example, integration with Product microservice if needed)
 }
