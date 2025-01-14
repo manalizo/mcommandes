@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.ZoneId;
 import java.util.*;
@@ -37,12 +39,19 @@ public class CommandeController implements HealthIndicator {
 
         private int commandesLast;
 
-        // Create or Update a Commande
-        @PostMapping("/create")
-        public ResponseEntity<Commande> createCommande(@RequestBody Commande commande) {
-            Commande savedCommande = commandeService.saveCommande(commande);
-            return ResponseEntity.ok(savedCommande);
-        }
+    @PostMapping("/create")
+    public ResponseEntity<Commande> createCommande(
+            @RequestParam("description") String description,
+            @RequestParam("quantite") int quantite,
+            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,  // Use LocalDate here
+            @RequestParam("montant") double montant,
+            @RequestParam("productid") int productid) {
+
+        Commande commande = new Commande(description, quantite, date, montant, productid);
+        Commande savedCommande = commandeService.saveCommande(commande);
+        return ResponseEntity.ok(savedCommande);
+    }
+
 
 
     // Get all Commandes

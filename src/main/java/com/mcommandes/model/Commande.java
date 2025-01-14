@@ -2,7 +2,7 @@ package com.mcommandes.model;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -13,10 +13,20 @@ public class Commande {
     private int id;
     private String description;
     private int quantite;
-    private Date date;
+    private LocalDate date;
     private double montant;
     private int productid;
-   // Getters et Setters
+    public Commande(){}
+    public Commande(String description, int quantite, LocalDate date,double montant, int productid) {
+        this.description=description;
+
+        this.quantite=quantite;
+        this.montant=montant;
+        this.date=date;
+        this.productid=productid;
+    }
+
+    // Getters et Setters
     public int getId() {
         return id;
     }
@@ -49,11 +59,11 @@ public class Commande {
         this.quantite = quantite;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
