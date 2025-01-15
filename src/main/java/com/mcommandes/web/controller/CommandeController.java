@@ -54,7 +54,7 @@ public class CommandeController implements HealthIndicator {
     }
 
 
-
+/*
     // Get all Commandes
     @GetMapping
     public ResponseEntity<List<Commande>> getAllCommandes() {
@@ -62,28 +62,48 @@ public class CommandeController implements HealthIndicator {
         List<Commande> commandes = commandeService.getAllCommandes();
 
         return ResponseEntity.ok( commandes);
-    }/*
-        @GetMapping
-        public ResponseEntity<List<Commande>> getAllCommandes() {
-            commandesLast=appProperties.getLimitDeCommandes();
-            LocalDate cutoffDate = LocalDate.now().minusDays(commandesLast);
+    }*/
 
-            List<Commande> commandes = commandeService.getAllCommandes();
 
-            return ResponseEntity.ok( commandes.stream()
-                    .filter(commande -> {
-                        if (commande.getDate() == null) {
-                            return false;
-                        }
-                        LocalDate commandeDate = commande.getDate().toInstant()
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDate();
-                        return commandeDate.isAfter(cutoffDate);
-                    })
-                    .collect(Collectors.toList()));
+
+    @GetMapping
+    public ResponseEntity<List<Commande>> getAllCommandes() {
+       int commandesLast = appProperties.getLimitDeCommandes();
+      //  int commandesLast=10;
+        System.out.println("commandesLast: " + commandesLast);
+
+        LocalDate cutoffDate = LocalDate.now().minusDays(commandesLast);
+        System.out.println("Cutoff date: " + cutoffDate);
+
+        List<Commande> commandes = commandeService.getAllCommandes();
+        System.out.println("Initial commandes list size: " + (commandes != null ? commandes.size() : "null"));
+
+        if (commandes != null) {
+            commandes.forEach(commande -> System.out.println("Commande: " + commande));
         }
-*/
-        // Get a Commande by ID
+
+        List<Commande> filteredCommandes = commandes.stream()
+                .filter(commande -> {
+                    boolean result = isAfterCutoff(commande, cutoffDate);
+                    System.out.println("Filtering Commande: " + commande + " Result: " + result);
+                    return result;
+                })
+                .collect(Collectors.toList());
+
+        System.out.println("Filtered commandes list size: " + filteredCommandes.size());
+
+        return ResponseEntity.ok(filteredCommandes);
+    }
+
+    private boolean isAfterCutoff(Commande commande, LocalDate cutoffDate) {
+        LocalDate commandeDate = commande.getDate();
+        System.out.println("Checking Commande Date: " + commandeDate + " against Cutoff: " + cutoffDate);
+        return commandeDate != null && commandeDate.isAfter(cutoffDate);
+    }
+
+
+
+    // Get a Commande by ID
         @GetMapping("/{id}")
         public ResponseEntity<Commande> getCommandeById(@PathVariable int id) {
             Optional<Commande> commande = commandeService.getCommandeById(id);
