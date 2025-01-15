@@ -16,14 +16,17 @@ public class Commande {
     private LocalDate date;
     private double montant;
     private int productid;
+    private String email;
+
     public Commande(){}
-    public Commande(String description, int quantite, LocalDate date,double montant, int productid) {
+    public Commande(String description, int quantite, LocalDate date,double montant, int productid,String email) {
         this.description=description;
 
         this.quantite=quantite;
         this.montant=montant;
         this.date=date;
         this.productid=productid;
+         this.email=email;
     }
 
     // Getters et Setters
@@ -36,11 +39,18 @@ public class Commande {
     }
     // Getters and Setters
     public int getProductid() {
-        return id;
+        return productid;
     }
 
     public void setProductid(int productid) {
-        this.id = id;
+        this.productid = productid;
+    }
+    public String getemail() {
+        return email;
+    }
+
+    public void setemail(String email) {
+        this.email = email;
     }
 
     public String getDescription() {
@@ -74,4 +84,5 @@ public class Commande {
     public void setMontant(double montant) {
         this.montant = montant;
     }
+
 }

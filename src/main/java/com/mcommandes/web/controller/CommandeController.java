@@ -45,9 +45,10 @@ public class CommandeController implements HealthIndicator {
             @RequestParam("quantite") int quantite,
             @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,  // Use LocalDate here
             @RequestParam("montant") double montant,
-            @RequestParam("productid") int productid) {
+            @RequestParam("productid") int productid,
+     @RequestParam("email") String email) {
 
-        Commande commande = new Commande(description, quantite, date, montant, productid);
+        Commande commande = new Commande(description, quantite, date, montant, productid,email);
         Commande savedCommande = commandeService.saveCommande(commande);
         return ResponseEntity.ok(savedCommande);
     }

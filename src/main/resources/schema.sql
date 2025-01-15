@@ -4,6 +4,7 @@ CREATE TABLE Commande (
                           quantite INT NOT NULL,
                           date DATE NOT NULL,
                           montant DOUBLE NOT NULL,
-                          productid INT NOT NULL
+                          productid INT NOT NULL,
+                          email TEXT NOT NULL
 );
 
