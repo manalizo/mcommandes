@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -122,7 +123,12 @@ public class CommandeController implements HealthIndicator {
         Thread.sleep(10000); // Délai de 10 secondes (simule une lenteur excessive)
         return "Réponse avec délai";
     }
-
+    @GetMapping("/commande/email/")
+    public ResponseEntity<List<Commande>> getCommandesByEmail(@RequestParam("email") String email) {
+        Optional<List<Commande>> commandes = commandeService.getCommandeByEmail(email);
+        return commandes.map(ResponseEntity::ok)  // If the list is present
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // If empty
+    }
     @GetMapping("/details")
     public String getCommandeDetails() {
         return commandeService.getCommandeDetails();

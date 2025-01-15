@@ -29,6 +29,9 @@ public class CommandeService {
         return commandeRepository.findAll();
     }
 
+    public Optional<List<Commande>> getCommandeByEmail(String email) {
+        return Optional.ofNullable(commandeRepository.findByEmail(email));
+    }
     // Get a specific commande by ID
     public Optional<Commande> getCommandeById(int id) {
         return commandeRepository.findById(id);
