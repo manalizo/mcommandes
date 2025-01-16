@@ -79,12 +79,17 @@ public class CommandeController implements HealthIndicator {
         Thread.sleep(10000); // Simulate a delay of 10 seconds
         return "Response with delay";
     }
-    @GetMapping("/commande/email/")
-    public ResponseEntity<List<Commande>> getCommandesByEmail(@RequestParam("email") String email) {
-        Optional<List<Commande>> commandes = commandeService.getCommandeByEmail(email);
-        return commandes.map(ResponseEntity::ok)  // If the list is present
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());  // If empty
+
+    @GetMapping("/user/{email}/commandes")
+    public ResponseEntity<List<Commande>> getCommandesByUser(@PathVariable String email) {
+        List<Commande> commandes = commandeService.getCommandeByEmail(email).orElse(null);
+        if (commandes == null || commandes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(commandes);
     }
+
+
     @GetMapping("/details")
     public String getCommandeDetails() {
         return commandeService.getCommandeDetails();
