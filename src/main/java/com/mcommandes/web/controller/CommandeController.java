@@ -43,24 +43,41 @@ public class CommandeController implements HealthIndicator {
     }
 
     @GetMapping
-    public ResponseEntity<List<CommandeResponse>> getAllCommandes() {
-        List<Commande> commandes = commandeService.getAllCommandes();
-        commandes.forEach(commande -> System.out.println("Commande ProductID: " + commande.getProductid()));
-        // Transform the Commande entities into CommandeResponse DTOs
-        List<CommandeResponse> response = commandes.stream()
-                .map(commande -> new CommandeResponse(
-                        commande.getId(),
-                        commande.getDescription(),
-                        commande.getQuantite(),
-                        commande.getDate(),
-                        commande.getMontant(),
-                        commande.getProductid(),  // Include productid
-                        commande.getemail()       // Include email
-                ))
-                .collect(Collectors.toList());
+    public ResponseEntity<List<Commande>> getAllCommandes() {
+        int commandesLast = appProperties.getLimitDeCommandes();
+        System.out.println("commandesLast: " + commandesLast);
 
-        return ResponseEntity.ok(response);
+        LocalDate cutoffDate = LocalDate.now().minusDays(commandesLast);
+        System.out.println("Cutoff date: " + cutoffDate);
+
+        // Fetch all commandes
+        List<Commande> commandes = commandeService.getAllCommandes();
+        System.out.println("Initial commandes list size: " + (commandes != null ? commandes.size() : "null"));
+
+        if (commandes != null) {
+            commandes.forEach(commande -> System.out.println("Commande: " + commande));
+        }
+
+        // Filter commandes based on cutoff date
+        List<Commande> filteredCommandes = commandes.stream()
+                .filter(commande -> {
+                    boolean result = isAfterCutoff(commande, cutoffDate);
+                    System.out.println("Filtering Commande: " + commande + " Result: " + result);
+                    return result;
+                })
+                .collect(Collectors.toList());
+        System.out.println("Filtered commandes list size: " + filteredCommandes.size());
+
+        // Return filtered commandes directly
+        return ResponseEntity.ok(filteredCommandes);
     }
+
+    private boolean isAfterCutoff(Commande commande, LocalDate cutoffDate) {
+        LocalDate commandeDate = commande.getDate();
+        System.out.println("Checking Commande Date: " + commandeDate + " against Cutoff: " + cutoffDate);
+        return commandeDate != null && commandeDate.isAfter(cutoffDate);
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Commande> getCommandeById(@PathVariable int id) {
